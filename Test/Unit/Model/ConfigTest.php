@@ -23,11 +23,10 @@ class ConfigTest extends TestCase
      *
      * @param string $setterMethod
      * @param string $getterMethod
-     *
      * @param bool $value
      * @dataProvider dataProviderDirectSettersGettersMethods
      */
-    public function testDirectSettersGettersMethods($setterMethod, $getterMethod, $value): void
+    public function testDirectSettersGettersMethods($setterMethod, $getterMethod, $value)
     {
         // Need a mocked object with only dummy methods.  It is just needed for construction.
         // The setter/getter methods do not use this object (for this set of tests).
@@ -42,7 +41,7 @@ class ConfigTest extends TestCase
     /**
      * @return array
      */
-    public function dataProviderDirectSettersGettersMethods(): array
+    public function dataProviderDirectSettersGettersMethods()
     {
         return [
             ['setShippingPriceIncludeTax', 'shippingPriceIncludesTax', true],
@@ -61,16 +60,17 @@ class ConfigTest extends TestCase
      * @param bool $applyTaxAfterDiscount
      * @param bool $discountTaxIncl
      * @param string $expectedValue
-     *
-     * @return void
      * @dataProvider dataProviderGetCalculationSequence
      */
-    public function testGetCalculationSequence($applyTaxAfterDiscount, $discountTaxIncl, $expectedValue): void
+    public function testGetCalculationSequence($applyTaxAfterDiscount, $discountTaxIncl, $expectedValue)
     {
         $scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
-        $scopeConfigMock
+        $scopeConfigMock->expects($this->at(0))
             ->method('getValue')
-            ->willReturnOnConsecutiveCalls($applyTaxAfterDiscount, $discountTaxIncl);
+            ->willReturn($applyTaxAfterDiscount);
+        $scopeConfigMock->expects($this->at(1))
+            ->method('getValue')
+            ->willReturn($discountTaxIncl);
 
         /** @var Config */
         $model = new Config($scopeConfigMock);
@@ -80,7 +80,7 @@ class ConfigTest extends TestCase
     /**
      * @return array
      */
-    public function dataProviderGetCalculationSequence(): array
+    public function dataProviderGetCalculationSequence()
     {
         return [
             [true,  true,  Calculation::CALC_TAX_AFTER_DISCOUNT_ON_INCL],
@@ -97,11 +97,9 @@ class ConfigTest extends TestCase
      * @param string $path
      * @param bool|int $configValue
      * @param bool $expectedValue
-     *
-     * @return void
      * @dataProvider dataProviderScopeConfigMethods
      */
-    public function testScopeConfigMethods($method, $path, $configValue, $expectedValue): void
+    public function testScopeConfigMethods($method, $path, $configValue, $expectedValue)
     {
         $scopeConfigMock = $this->getMockForAbstractClass(ScopeConfigInterface::class);
         $scopeConfigMock->expects($this->once())
@@ -118,14 +116,14 @@ class ConfigTest extends TestCase
      * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function dataProviderScopeConfigMethods(): array
+    public function dataProviderScopeConfigMethods()
     {
         return [
             [
                 'priceIncludesTax',
                 Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX,
                 true,
-                true
+                true,
             ],
             [
                 'applyTaxAfterDiscount',
