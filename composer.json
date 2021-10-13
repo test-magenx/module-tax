@@ -1,5 +1,5 @@
 {
-    "name": "test-magenx/module-tax",
+    "name": "magenxcommerce/module-tax",
     "description": "N/A",
     "config": {
         "sort-packages": true
